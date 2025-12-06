@@ -12,6 +12,9 @@ public class Main {
         game = new Game("Sally", "Jack");
 
         System.out.println(game);
+
+        Board board = new Board();
+        board.printBoard();
     }
 
 }
