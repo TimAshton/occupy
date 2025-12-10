@@ -1,0 +1,21 @@
+openapi: 3.0.0
+info:
+  description: Occupy's API Spec
+  version: "1.0.0"
+  title: Occupy API
+paths:
+  /v1/game:
+    get:
+      responses: 
+        '200':
+          description: Details of matching game
+  /v1/sectors:
+    get: # ID or array of ids
+      responses: 
+        '200':
+          description: List of matching sectors
+  /v1/players:
+    get: # ID or array of ids
+      responses:
+        '200':
+          description: List of matching players
