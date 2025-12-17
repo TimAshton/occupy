@@ -4,18 +4,103 @@ info:
   version: "1.0.0"
   title: Occupy API
 paths:
-  /v1/game:
+  /v1/game-system:
     get:
-      responses: 
-        '200':
-          description: Details of matching game
-  /v1/sectors:
-    get: # ID or array of ids
-      responses: 
-        '200':
-          description: List of matching sectors
-  /v1/players:
-    get: # ID or array of ids
+      description: Retrieve high-level game system details. There is only one.
       responses:
         '200':
-          description: List of matching players
+          description: TODO.
+          content:
+            application/json:
+              schema:
+                items:
+                  type: object
+                  properties: {}
+    patch: 
+      description: Update the game system record.
+      responses:
+        '200':
+          description: TODO.
+  /v1/season:
+    get:
+      description: Game season infomation and operations.
+      responses:
+        '200':
+          description: TODO.
+          content:
+            application/json:
+              schema:
+                items:
+                  type: object
+                  properties: {}
+    post: 
+      description: Add new season.
+      responses:
+        '200':
+          description: TODO.
+    patch: 
+      description: Update a season.
+      responses:
+        '200':
+          description: TODO.
+  /v1/player:
+    get:
+      description: Retrieve player infomation.
+      responses:
+        '200':
+          description: TODO.
+          content:
+            application/json:
+              schema:
+                items:
+                  type: object
+                  properties: {}
+    post: 
+      description: Add new player.
+      responses:
+        '200':
+          description: TODO.
+    patch: 
+      description: Update a player.
+      responses:
+        '200':
+          description: TODO.
+  /v1/game:
+    get:
+      description: Retrieve game information.
+      responses:
+        '200':
+          description: TODO.
+          content:
+            application/json:
+              schema:
+                items:
+                  type: object
+                  properties: {}
+    post: 
+      description: Create new game.
+      responses:
+        '200':
+          description: TODO.
+  /v1/sector:
+    get:
+      description: Retrieve sector information.
+      responses:
+        '200':
+          description: TODO.
+          content:
+            application/json:
+              schema:
+                items:
+                  type: object
+                  properties: {}
+    post: 
+      description: Add new sector.
+      responses:
+        '200':
+          description: TODO.
+    patch: 
+      description: Update a sector.
+      responses:
+        '200':
+          description: TODO.
