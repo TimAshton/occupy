@@ -1,0 +1,141 @@
+openapi: 3.0.0
+info:
+  description: Occupy's API Spec
+  title: Occupy API
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /v1/game-system:
+    get:
+      description: Retrieve high-level game system details. There is only one.
+      operationId: v1GameSystemGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties: {}
+                  type: object
+                type: array
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+    patch:
+      description: Update the game system record.
+      operationId: v1GameSystemPATCH
+      responses:
+        "200":
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+  /v1/season:
+    get:
+      description: Game season infomation and operations.
+      operationId: v1SeasonGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties: {}
+                  type: object
+                type: array
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+    patch:
+      description: Update a season.
+      operationId: v1SeasonPATCH
+      responses:
+        "200":
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+    post:
+      description: Add new season.
+      operationId: v1SeasonPOST
+      responses:
+        "200":
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+  /v1/player:
+    get:
+      description: Retrieve player infomation.
+      operationId: v1PlayerGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties: {}
+                  type: object
+                type: array
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+    patch:
+      description: Update a player.
+      operationId: v1PlayerPATCH
+      responses:
+        "200":
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+    post:
+      description: Add new player.
+      operationId: v1PlayerPOST
+      responses:
+        "200":
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+  /v1/game:
+    get:
+      description: Retrieve game information.
+      operationId: v1GameGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties: {}
+                  type: object
+                type: array
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+    post:
+      description: Create new game.
+      operationId: v1GamePOST
+      responses:
+        "200":
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+  /v1/sector:
+    get:
+      description: Retrieve sector information.
+      operationId: v1SectorGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties: {}
+                  type: object
+                type: array
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+    patch:
+      description: Update a sector.
+      operationId: v1SectorPATCH
+      responses:
+        "200":
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+    post:
+      description: Add new sector.
+      operationId: v1SectorPOST
+      responses:
+        "200":
+          description: TODO.
+      x-eov-operation-handler: controllers/DefaultController
+components:
+  schemas: {}
