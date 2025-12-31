@@ -39,3 +39,31 @@
 .read-the-docs {
   color: #888;
 }
+
+
+#game-board {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+
+.column {
+    padding: 1px;
+    width: fit-content;
+}
+
+.sector {
+  height: 20px;
+  width: 20px;
+  border: 1px solid #fff;
+}
