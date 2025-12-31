@@ -8,6 +8,9 @@ Location-based strategy game.
 * API - Java/OpenAPI
 * Server - NodeJS
 
+## Overview
+![Alt Occupy UI Wireframe](occupy-ui-wireframe.png)
+
 ## Service Layer
 ### Data Structure Summary
 * GameSystem
