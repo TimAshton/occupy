@@ -1,3 +1,41 @@
+import os
+
+class Game:
+    def __init__(self):
+        self.game_data = [
+        [(0,0,"?"),(0,1,"?"),(0,2,"?")],
+        [(1,0,"?"),(1,1,"?"),(1,2,"?")],
+        [(2,0,"?"),(2,1,"?"),(2,2,"?")]
+    ]
+        
+    def draw_board(self):
+        os.system('clear')
+
+        print("Turn: Player 1\n")
+
+        for i in self.game_data:
+            row_data = ""
+            for x in i:
+                row_data = row_data + str(x[2])
+            print(row_data)
+
+        print("\n")
+
+        print("Player 1: \n")
+        print("\tSettler Count: 100\n")
+
+        print("Player 2: \n")
+        print("\tSettler Count: 100\n")
+
+    def sector_action(self, sectorId):
+        print(sectorId)
+
+        # for
+        # if x == x and y == y:
+        #     rewrite owner
+        # else:
+        #     keep old values
+
 def print_welcome_banner():
     print("")
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -32,11 +70,13 @@ def get_help():
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 def start_game():
-    print("")
-    print("   123")
-    print("A: 000")
-    print("B: 000")
-    print("C: 000")
+    game = Game()
+
+    game.draw_board()
+
+    game.sector_action((0,0,1)) # x, y amd playerId
+
+    game.draw_board()
 
 def main():
     print_welcome_banner()
