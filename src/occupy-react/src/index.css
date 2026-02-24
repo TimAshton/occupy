@@ -1,0 +1,55 @@
+body {
+  font-family: sans-serif;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  width: fit-content;
+  margin: auto;
+}
+
+.column {
+  flex: 1;
+  padding: 20px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 10px; 
+}
+
+.box {
+    background-color: lightgray;
+    border: 1px solid black;
+    padding: 1rem;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35px;
+    width: 35px;
+}
+
+.team-header {
+  font-size: 40px;
+}
+
+.blue {
+  color: blue;
+}
+
+.red {
+  color: red;
+}
+
+#game-header {
+  font-size: 50px;
+  font-weight: 800;
+  width: fitent;
+  margin: unset;
+  width: fit-content;
+  margin: auto;
+}
