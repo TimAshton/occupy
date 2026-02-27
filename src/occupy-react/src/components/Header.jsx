@@ -1,5 +1,5 @@
-export default function Header() {
+export default function Header({headerText}) {
     return (
-        <div id="game-header">Occupy v0.0</div>
+        <div id="game-header">{ headerText }</div>
     )
 }

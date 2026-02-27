@@ -4,7 +4,7 @@ import Board from './components/Board'
 function App() {
   return (
     <>
-        <Header />
+        <Header headerText="Occupy v0.0" />
         <Board />
     </>
   )
