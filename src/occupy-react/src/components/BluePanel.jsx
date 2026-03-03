@@ -1,7 +1,6 @@
 import TeamHeader from './TeamHeader'
 import Settlers from './Settlers'
 import PlayerSectors from './PlayerSectors'
-import BluePanel from './BluePanel'
 
 export default function BluePanel() {
     return (
