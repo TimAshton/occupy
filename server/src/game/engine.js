@@ -7,7 +7,7 @@ import {
   resolveContest,
   checkGameOver,
   calculateScores,
-} from '../../../shared/gameConstants.js';
+} from '../shared/gameConstants.js';
 
 /**
  * Build a fresh, empty board: array of 100 square objects.

@@ -17,7 +17,7 @@ ENTRYPOINT ["/sbin/tini", "--"]
 COPY --from=deps /app/node_modules ./node_modules
 COPY server/src ./src
 COPY server/package.json ./
-COPY shared ./shared
+COPY shared ./src/shared
 
 ENV DB_PATH=/data/occupy.db
 ENV NODE_ENV=production

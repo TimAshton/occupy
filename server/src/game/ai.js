@@ -1,5 +1,5 @@
 // server/src/game/ai.js
-import { SQUARE_STATE, GAME_CONFIG, TURN_ACTION, DIFFICULTY } from '../../../shared/gameConstants.js';
+import { SQUARE_STATE, GAME_CONFIG, TURN_ACTION, DIFFICULTY } from '../shared/gameConstants.js';
 
 /**
  * Pick a move for the CPU player.
