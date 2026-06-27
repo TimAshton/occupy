@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: us-west-2
   ECR_SERVER_REPO: occupy-server
   ECR_CLIENT_REPO: occupy-client
 
