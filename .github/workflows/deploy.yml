@@ -1,0 +1,121 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  ECR_SERVER_REPO: occupy-server
+  ECR_CLIENT_REPO: occupy-client
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install --prefix client
+      - run: npm install --prefix server
+      - run: npm run test:server
+      - run: npm run test:client
+
+  build-and-push:
+    name: Build & Push Images
+    runs-on: ubuntu-latest
+    needs: test
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set image tag
+        id: meta
+        run: echo "tag=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+
+      - name: Build & push server image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG:      ${{ steps.meta.outputs.tag }}
+        run: |
+          docker build \
+            -t $REGISTRY/$ECR_SERVER_REPO:$TAG \
+            -t $REGISTRY/$ECR_SERVER_REPO:latest \
+            ./server
+          docker push $REGISTRY/$ECR_SERVER_REPO:$TAG
+          docker push $REGISTRY/$ECR_SERVER_REPO:latest
+
+      - name: Build & push client image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG:      ${{ steps.meta.outputs.tag }}
+        run: |
+          docker build \
+            -t $REGISTRY/$ECR_CLIENT_REPO:$TAG \
+            -t $REGISTRY/$ECR_CLIENT_REPO:latest \
+            ./client
+          docker push $REGISTRY/$ECR_CLIENT_REPO:$TAG
+          docker push $REGISTRY/$ECR_CLIENT_REPO:latest
+
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Copy docker-compose.yml to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host:     ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          source:   docker-compose.yml
+          target:   /opt/occupy
+
+      - name: Pull & restart containers on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            cd /opt/occupy
+            cat > .env <<ENV
+            ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
+            IMAGE_TAG=${{ needs.build-and-push.outputs.image-tag }}
+            ENV
+            aws ecr get-login-password --region ${{ env.AWS_REGION }} \
+              | docker login --username AWS --password-stdin \
+                ${{ steps.login-ecr.outputs.registry }}
+            docker compose pull
+            docker compose up -d --remove-orphans
+            docker image prune -f
+            echo "Deploy complete"
