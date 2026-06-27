@@ -1,0 +1,41 @@
+name: occupy-dev
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: deps          # only install deps, then mount source for hot reload
+    image: occupy-server:dev
+    command: node --watch src/index.js
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      CLIENT_ORIGIN: "http://localhost:5173"
+      DB_PATH: /data/occupy.db
+    volumes:
+      - ./server/src:/app/src:ro
+      - ./shared:/app/shared:ro
+      - sqlite_data:/data
+    restart: unless-stopped
+
+  client:
+    image: node:20-alpine
+    working_dir: /app
+    command: npm run dev -- --host
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_SERVER_URL: ""
+    volumes:
+      - ./client:/app:ro
+      - ./shared:/shared:ro
+      - client_nm:/app/node_modules
+    depends_on:
+      - server
+
+volumes:
+  sqlite_data:
+  client_nm:

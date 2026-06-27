@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    @apply bg-surface-bg text-text-primary font-body antialiased min-h-screen;
+  }
+
+  h1, h2, h3 { @apply font-display tracking-widest; }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
+           font-body font-semibold text-sm rounded
+           transition-all duration-150 cursor-pointer
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent text-surface-bg hover:brightness-110 active:scale-95;
+  }
+
+  .btn-ghost {
+    @apply btn border border-territory-border text-text-secondary
+           hover:border-accent hover:text-accent active:scale-95;
+  }
+
+  .btn-danger {
+    @apply btn bg-territory-red text-white hover:brightness-110 active:scale-95;
+  }
+
+  .card {
+    @apply bg-surface-card rounded border border-territory-border/40 p-4;
+  }
+
+  .input {
+    @apply bg-surface-raised border border-territory-border/60 rounded
+           px-3 py-2 text-text-primary placeholder:text-text-muted
+           focus:outline-none focus:border-accent/70
+           transition-colors duration-150;
+  }
+}

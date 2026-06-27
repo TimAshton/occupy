@@ -1,0 +1,20 @@
+{
+  "name": "occupy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Occupy — a territory bluffing game for 2 players",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev",
+    "build": "npm --prefix client run build",
+    "test": "npm --prefix client run test && npm --prefix server run test",
+    "test:client": "npm --prefix client run test",
+    "test:server": "npm --prefix server run test",
+    "lint": "npm --prefix client run lint && npm --prefix server run lint",
+    "start": "npm --prefix server run start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
