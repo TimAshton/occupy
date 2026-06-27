@@ -5,7 +5,7 @@ import {
   createGame, getGame, addPlayer, getGamePlayers, listActiveGames,
 } from '../db/database.js';
 import { createBoard, createPlayersState } from '../game/engine.js';
-import { GAME_STATUS } from './shared/gameConstants.js';
+import { GAME_STATUS } from '../shared/gameConstants.js';
 
 const router = Router();
 
