@@ -2,12 +2,12 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY client/package.json client/package-lock.json ./
 RUN npm ci
 
-COPY . .
+COPY client/ .
+COPY shared/ ./shared/
 
-# VITE_SERVER_URL is empty — client talks to same origin via Nginx proxy
 ARG VITE_SERVER_URL=""
 ENV VITE_SERVER_URL=$VITE_SERVER_URL
 
@@ -16,12 +16,8 @@ RUN npm run build
 # ── Stage 2: serve ────────────────────────────────────────────────────────────
 FROM nginx:1.27-alpine AS runtime
 
-# Remove default nginx config
 RUN rm /etc/nginx/conf.d/default.conf
-
-COPY nginx.conf /etc/nginx/conf.d/occupy.conf
-
-# Copy Vite build output
+COPY client/nginx.conf /etc/nginx/conf.d/occupy.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80

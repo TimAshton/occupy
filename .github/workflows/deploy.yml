@@ -67,9 +67,10 @@ jobs:
           TAG:      ${{ steps.meta.outputs.tag }}
         run: |
           docker build \
+            -f client/Dockerfile \
             -t $REGISTRY/$ECR_CLIENT_REPO:$TAG \
             -t $REGISTRY/$ECR_CLIENT_REPO:latest \
-            ./client
+            .
           docker push $REGISTRY/$ECR_CLIENT_REPO:$TAG
           docker push $REGISTRY/$ECR_CLIENT_REPO:latest
 
