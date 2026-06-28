@@ -1,0 +1,7 @@
+occupy.tashton.com {
+    reverse_proxy /api/* server:3001
+    reverse_proxy /socket.io/* server:3001
+    file_server
+    root * /usr/share/caddy
+    try_files {path} /index.html
+}

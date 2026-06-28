@@ -1,10 +1,5 @@
 name: occupy
 
-# Images are set via environment variables injected by the deploy workflow.
-# On the EC2 host, create /opt/occupy/.env with:
-#   ECR_REGISTRY=<account>.dkr.ecr.<region>.amazonaws.com
-#   IMAGE_TAG=latest   (or a git SHA for pinned deploys)
-
 services:
   server:
     image: ${ECR_REGISTRY}/occupy-server:${IMAGE_TAG:-latest}
@@ -12,7 +7,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
-      CLIENT_ORIGIN: "http://localhost"   # Nginx is on the same host
+      CLIENT_ORIGIN: "https://occupy.tashton.com"
       DB_PATH: /data/occupy.db
     volumes:
       - sqlite_data:/data
@@ -28,6 +23,10 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
     depends_on:
       server:
         condition: service_healthy
@@ -38,4 +37,6 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /opt/occupy/data   # EBS-backed directory on EC2
+      device: /opt/occupy/data
+  caddy_data:
+  caddy_config:

@@ -13,13 +13,11 @@ ENV VITE_SERVER_URL=$VITE_SERVER_URL
 
 RUN npm run build
 
-# ── Stage 2: serve ────────────────────────────────────────────────────────────
-FROM nginx:1.27-alpine AS runtime
+# ── Stage 2: serve with Caddy ─────────────────────────────────────────────────
+FROM caddy:2-alpine AS runtime
 
-RUN rm /etc/nginx/conf.d/default.conf
-COPY client/nginx.conf /etc/nginx/conf.d/occupy.conf
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/caddy
+COPY client/Caddyfile /etc/caddy/Caddyfile
 
 EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 443
