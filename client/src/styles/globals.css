@@ -5,8 +5,15 @@
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
 
+  html {
+    /* Prevent font size bump on iOS landscape */
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-surface-bg text-text-primary font-body antialiased min-h-screen;
+    /* Safe area insets for notched phones */
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   h1, h2, h3 { @apply font-display tracking-widest; }
@@ -17,7 +24,8 @@
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
            font-body font-semibold text-sm rounded
            transition-all duration-150 cursor-pointer
-           disabled:opacity-40 disabled:cursor-not-allowed;
+           disabled:opacity-40 disabled:cursor-not-allowed
+           touch-manipulation;
   }
 
   .btn-primary {
@@ -34,13 +42,19 @@
   }
 
   .card {
-    @apply bg-surface-card rounded border border-territory-border/40 p-4;
+    @apply bg-surface-card rounded border border-territory-border/40 p-3 sm:p-4;
   }
 
   .input {
     @apply bg-surface-raised border border-territory-border/60 rounded
-           px-3 py-2 text-text-primary placeholder:text-text-muted
+           px-3 py-2.5 text-text-primary placeholder:text-text-muted
            focus:outline-none focus:border-accent/70
-           transition-colors duration-150;
+           transition-colors duration-150 text-base;
+    /* text-base prevents iOS auto-zoom on focus */
   }
+}
+
+/* Safe area bottom padding for bottom sheet */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }

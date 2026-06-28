@@ -18,76 +18,73 @@ export default function GameStatus() {
 
   const { players, currentTurn, scores } = gameState;
   const isMyTurn = currentTurn === myRole;
+  const myScore = scores?.[myRole] ?? 0;
   const oppRole = myRole === 'player1' ? 'player2' : 'player1';
+  const oppScore = scores?.[oppRole] ?? 0;
+  const mySettlers = players[myRole]?.settlers ?? 0;
+  const oppSettlers = players[oppRole]?.settlers ?? 0;
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* Turn indicator */}
+    <div className="flex flex-col gap-2">
+      {/* Turn banner */}
       <div className={clsx(
-        'card border transition-colors',
-        isMyTurn ? 'border-accent/60 animate-pulse-turn' : 'border-territory-border/30'
+        'rounded px-3 py-2 text-center text-sm font-bold tracking-widest font-display transition-colors',
+        isMyTurn
+          ? 'bg-accent/20 text-accent border border-accent/40 animate-pulse-turn'
+          : 'bg-surface-raised text-text-muted border border-territory-border/30'
       )}>
-        <p className="text-xs text-text-muted uppercase tracking-widest mb-1">Turn</p>
-        <p className={clsx('font-display text-2xl tracking-wider', isMyTurn ? 'text-accent' : 'text-text-secondary')}>
-          {isMyTurn ? '⚡ Your move' : '⏳ Waiting...'}
-        </p>
+        {isMyTurn ? '⚡ YOUR TURN' : '⏳ OPPONENT\'S TURN'}
       </div>
 
-      {/* Score */}
-      <div className="card">
-        <p className="text-xs text-text-muted uppercase tracking-widest mb-2">Squares</p>
-        <div className="flex gap-3">
-          <div className="flex-1 text-center">
-            <div className="text-2xl font-mono font-semibold text-territory-red">{scores?.player1 ?? 0}</div>
-            <div className="text-xs text-text-muted truncate">{players.player1.name}</div>
-          </div>
-          <div className="text-text-muted self-center text-sm">vs</div>
-          <div className="flex-1 text-center">
-            <div className="text-2xl font-mono font-semibold text-territory-blue">{scores?.player2 ?? 0}</div>
-            <div className="text-xs text-text-muted truncate">{players.player2.name}</div>
-          </div>
+      {/* Scores — compact two-column */}
+      <div className="grid grid-cols-2 gap-2">
+        {/* Me */}
+        <div className={clsx(
+          'card py-2 text-center',
+          myRole === 'player1' ? 'border-territory-red/40' : 'border-territory-blue/40'
+        )}>
+          <div className={clsx(
+            'text-2xl font-mono font-bold',
+            myRole === 'player1' ? 'text-territory-red' : 'text-territory-blue'
+          )}>{myScore}</div>
+          <div className="text-[10px] text-text-muted uppercase tracking-wider mt-0.5">You</div>
+          <div className="text-xs text-text-secondary mt-1 font-mono">{mySettlers.toLocaleString()} settlers</div>
+        </div>
+
+        {/* Opponent */}
+        <div className={clsx(
+          'card py-2 text-center',
+          oppRole === 'player1' ? 'border-territory-red/40' : 'border-territory-blue/40'
+        )}>
+          <div className={clsx(
+            'text-2xl font-mono font-bold',
+            oppRole === 'player1' ? 'text-territory-red' : 'text-territory-blue'
+          )}>{oppScore}</div>
+          <div className="text-[10px] text-text-muted uppercase tracking-wider mt-0.5">Opponent</div>
+          <div className="text-xs text-text-secondary mt-1 font-mono">{oppSettlers.toLocaleString()} settlers</div>
         </div>
       </div>
 
-      {/* Settlers */}
-      <div className="card">
-        <p className="text-xs text-text-muted uppercase tracking-widest mb-2">Settlers remaining</p>
-        <div className="flex gap-3">
-          <div className="flex-1">
-            <div className="text-sm font-mono text-territory-red">{players.player1.settlers}</div>
-            <div className="text-xs text-text-muted truncate">{players.player1.name}</div>
-          </div>
-          <div className="flex-1">
-            <div className="text-sm font-mono text-territory-blue">{players.player2.settlers}</div>
-            <div className="text-xs text-text-muted truncate">{players.player2.name}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Last move result */}
+      {/* Last move flash */}
       {flashResult && (
         <div className={clsx(
-          'card text-sm transition-all',
-          flashResult.winner === myRole ? 'border-green-600/60 text-green-400' : 'border-territory-red/60 text-territory-red'
+          'card py-2 px-3 text-xs border transition-all',
+          flashResult.winner === myRole
+            ? 'border-green-600/50 text-green-400'
+            : 'border-territory-red/50 text-territory-red'
         )}>
-          <p className="text-xs text-text-muted uppercase tracking-widest mb-1">
-            {flashResult.isCpuMove ? 'CPU moved' : 'Last move'}
-          </p>
           {flashResult.action === 'challenge' ? (
-            <>
-              <p>
-                {flashResult.winner === myRole ? '✅ You captured' : '❌ Defended'}
-                {' '}square with <span className="font-mono">{flashResult.attackerSettlers}</span> settlers
-              </p>
-              <p className="text-text-muted text-xs mt-0.5">
-                Defender had <span className="font-mono text-text-secondary">{flashResult.revealed}</span>
-              </p>
-            </>
+            <div>
+              <span className="font-bold">
+                {flashResult.isCpuMove ? '🤖 CPU' : flashResult.winner === myRole ? '✅ Won' : '❌ Lost'}
+              </span>
+              {' '}— defender had <span className="font-mono">{flashResult.revealed}</span> settlers
+            </div>
           ) : (
-            <p>
-              {flashResult.winner === myRole ? '🏴 Claimed' : '🤖 CPU claimed'} a square
-              {' '}with <span className="font-mono">{flashResult.settlers}</span> settlers
-            </p>
+            <div>
+              {flashResult.isCpuMove ? '🤖 CPU claimed' : '🏴 Claimed'} with{' '}
+              <span className="font-mono">{flashResult.settlers}</span> settlers
+            </div>
           )}
         </div>
       )}

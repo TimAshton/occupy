@@ -10,11 +10,10 @@ import Notification from '../components/Notification.jsx';
 export default function Game() {
   const navigate = useNavigate();
   const {
-    gameState, status, myRole, shareUrl, gameId,
-    opponentConnected, notification, reset,
+    gameState, status, myRole, gameId,
+    opponentConnected, notification, reset, pendingAction,
   } = useGameStore();
 
-  // Redirect to home if no session
   useEffect(() => {
     if (!gameId) navigate('/');
   }, [gameId]);
@@ -29,16 +28,21 @@ export default function Game() {
     navigate('/');
   }
 
+  // Waiting for opponent
   if (!gameState && status === 'waiting') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-4">
-        <h1 className="font-display text-5xl tracking-widest text-accent">WAITING FOR OPPONENT</h1>
-        <p className="text-text-secondary text-sm">Share this code with your opponent:</p>
-        <div className="flex gap-2 items-center">
-          <code className="bg-surface-card border border-territory-border/40 px-4 py-2 rounded font-mono text-text-primary text-sm">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-5 px-5">
+        <h1 className="font-display text-4xl sm:text-5xl tracking-widest text-accent text-center">
+          WAITING FOR OPPONENT
+        </h1>
+        <p className="text-text-secondary text-sm text-center">Share this code:</p>
+        <div className="flex flex-col sm:flex-row gap-2 items-center w-full max-w-sm">
+          <code className="bg-surface-card border border-territory-border/40 px-4 py-3 rounded font-mono text-text-primary text-sm flex-1 text-center break-all">
             {gameId}
           </code>
-          <button onClick={handleCopyLink} className="btn-ghost text-xs">Copy Link</button>
+          <button onClick={handleCopyLink} className="btn-ghost w-full sm:w-auto">
+            Copy Link
+          </button>
         </div>
         <div className="flex gap-2 items-center text-text-muted text-xs">
           <span className="inline-block w-2 h-2 rounded-full bg-accent animate-pulse" />
@@ -51,61 +55,72 @@ export default function Game() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Topbar */}
-      <header className="flex items-center justify-between px-5 py-3 border-b border-territory-border/30">
+      <header className="flex items-center justify-between px-4 py-2.5 border-b border-territory-border/30 flex-shrink-0">
         <button
           onClick={() => navigate('/')}
-          className="font-display text-2xl tracking-widest text-accent hover:text-white transition-colors"
+          className="font-display text-xl tracking-widest text-accent"
         >
           OCCUPY
         </button>
-        <div className="flex items-center gap-3 text-xs text-text-muted">
-          {gameId && (
-            <span className="font-mono">
-              #{gameId.slice(0, 8)}
-            </span>
-          )}
+        <div className="flex items-center gap-2 text-xs text-text-muted">
           {myRole && (
-            <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
-              myRole === 'player1' ? 'bg-territory-red/20 text-territory-red' : 'bg-territory-blue/20 text-territory-blue'
+            <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+              myRole === 'player1'
+                ? 'bg-territory-red/20 text-territory-red'
+                : 'bg-territory-blue/20 text-territory-blue'
             }`}>
               {myRole === 'player1' ? 'RED' : 'BLUE'}
+            </span>
+          )}
+          {gameId && (
+            <span className="font-mono text-text-muted hidden sm:inline">
+              #{gameId.slice(0, 8)}
             </span>
           )}
         </div>
       </header>
 
-      {/* Main layout */}
-      <main className="flex flex-1 gap-5 p-5 max-w-5xl mx-auto w-full">
-        {/* Board */}
-        <div className="flex-1 flex items-start">
+      {/* 
+        Mobile layout: board on top, status below, action panel as bottom sheet.
+        Desktop: board left, sidebar right.
+      */}
+      <main className="flex-1 flex flex-col md:flex-row md:gap-4 md:p-4 md:max-w-4xl md:mx-auto md:w-full">
+
+        {/* Board — full width on mobile, constrained on desktop */}
+        <div className="px-3 pt-3 pb-1 md:p-0 md:flex-1 md:flex md:items-start">
           <Board />
         </div>
 
-        {/* Sidebar */}
-        <aside className="w-60 flex flex-col gap-3 flex-shrink-0">
+        {/* Status — horizontal strip on mobile, sidebar on desktop */}
+        <div className="px-3 pb-2 md:p-0 md:w-52 md:flex-shrink-0 md:flex md:flex-col md:gap-3">
           <GameStatus />
-          <ActionPanel />
 
-          {/* Share link for online games */}
+          {/* Invite strip (online, waiting for opponent) */}
           {status === 'active' && !opponentConnected && (
-            <div className="card text-xs text-text-muted">
-              <p className="mb-1">Invite opponent:</p>
-              <button onClick={handleCopyLink} className="btn-ghost w-full text-xs">
-                Copy invite link
-              </button>
-            </div>
+            <button
+              onClick={handleCopyLink}
+              className="btn-ghost w-full text-xs mt-2 md:mt-0"
+            >
+              Copy invite link
+            </button>
           )}
 
           {/* Game over */}
           {status === 'finished' && (
-            <button onClick={handlePlayAgain} className="btn-primary w-full py-3 font-display tracking-widest text-base">
+            <button
+              onClick={handlePlayAgain}
+              className="btn-primary w-full py-3 font-display tracking-widest text-base mt-2 md:mt-0"
+            >
               PLAY AGAIN
             </button>
           )}
-        </aside>
+        </div>
       </main>
 
-      {/* Notification toast */}
+      {/* Action panel — bottom sheet on mobile when square selected */}
+      {pendingAction && <ActionPanel />}
+
+      {/* Toast */}
       {notification && <Notification />}
     </div>
   );
