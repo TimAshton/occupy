@@ -1,6 +1,6 @@
 # ── Stage 1: deps ────────────────────────────────────────────────────────────
 FROM node:20-alpine AS deps
-WORKDIR /app
+WORKDIR /app/server
 
 RUN apk add --no-cache python3 make g++
 
@@ -9,15 +9,15 @@ RUN npm ci --omit=dev
 
 # ── Stage 2: runtime ──────────────────────────────────────────────────────────
 FROM node:20-alpine AS runtime
-WORKDIR /app
+WORKDIR /app/server
 
 RUN apk add --no-cache tini
 ENTRYPOINT ["/sbin/tini", "--"]
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/server/node_modules ./node_modules
 COPY server/src ./src
 COPY server/package.json ./
-COPY shared ./src/shared
+COPY shared ../shared
 
 ENV DB_PATH=/data/occupy.db
 ENV NODE_ENV=production

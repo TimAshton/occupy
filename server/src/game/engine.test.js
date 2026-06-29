@@ -1,7 +1,7 @@
 // server/src/game/engine.test.js
 import { describe, it, expect } from 'vitest';
 import { createBoard, createPlayersState, applyMove, getBoardView } from './engine.js';
-import { SQUARE_STATE, TURN_ACTION, GAME_STATUS } from '../shared/gameConstants.js';
+import { SQUARE_STATE, TURN_ACTION, GAME_STATUS } from '../../../shared/gameConstants.js';
 
 function freshState(overrides = {}) {
   return {

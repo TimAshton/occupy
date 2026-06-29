@@ -6,7 +6,7 @@ import {
 } from '../db/database.js';
 import { applyMove, createBoard, createPlayersState, getPublicState } from './engine.js';
 import { getCpuMove } from './ai.js';
-import { SOCKET_EVENTS, GAME_STATUS, DIFFICULTY } from '../shared/gameConstants.js';
+import { SOCKET_EVENTS, GAME_STATUS, DIFFICULTY } from '../../../shared/gameConstants.js';
 
 export function registerSocketHandlers(io, socket) {
   console.log(`[socket] connected: ${socket.id}`);
