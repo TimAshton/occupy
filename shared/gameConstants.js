@@ -2,9 +2,9 @@
 // Shared between client and server — no framework imports allowed here
 
 export const GAME_CONFIG = {
-  BOARD_SIZE: 10,
+  BOARD_SIZE: 4,
   STARTING_SETTLERS: 1000,
-  TOTAL_SQUARES: 100,
+  TOTAL_SQUARES: 16,
 };
 
 export const GAME_STATUS = {

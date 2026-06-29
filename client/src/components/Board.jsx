@@ -19,7 +19,7 @@ export default function Board() {
   return (
     <div className="select-none w-full">
       {/* Grid — fills full width on mobile */}
-      <div className="grid grid-cols-10 gap-0.5 w-full">
+      <div className="grid grid-cols-4 gap-0.5 w-full">
         {board.map((square) => {
           const isSelected = selectedSquare === square.index;
           const isOwn =
