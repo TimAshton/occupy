@@ -1,30 +1,39 @@
 // client/src/pages/Home.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/gameStore.js';
 import { SOCKET_EVENTS, DIFFICULTY } from '../../../shared/gameConstants.js';
 
 export default function Home() {
   const navigate = useNavigate();
-  const { socket, connected } = useGameStore();
+  const { socket, connected, gameId } = useGameStore();
 
   const [playerName, setPlayerName] = useState('');
   const [joinCode, setJoinCode] = useState('');
   const [mode, setMode] = useState('online');
   const [difficulty, setDifficulty] = useState(DIFFICULTY.MEDIUM);
   const [tab, setTab] = useState('create');
+  const [launching, setLaunching] = useState(false);
+
+  // Only navigate once the server has actually confirmed a session
+  // (gameId gets set by useSocket.js after GAME_CREATED / GAME_JOINED).
+  // This avoids a race where we navigate before the socket event arrives,
+  // which would otherwise bounce back to Home via Game.jsx's gameId guard.
+  useEffect(() => {
+    if (launching && gameId) navigate('/game');
+  }, [launching, gameId]);
 
   function handleCreate() {
     const name = playerName.trim() || 'Player 1';
+    setLaunching(true);
     socket.emit(SOCKET_EVENTS.CREATE_GAME, { playerName: name, mode, difficulty });
-    navigate('/game');
   }
 
   function handleJoin() {
     if (!joinCode.trim()) return;
     const name = playerName.trim() || 'Player 2';
+    setLaunching(true);
     socket.emit(SOCKET_EVENTS.JOIN_GAME, { gameId: joinCode.trim(), playerName: name });
-    navigate('/game');
   }
 
   return (
@@ -114,10 +123,10 @@ export default function Home() {
 
               <button
                 onClick={handleCreate}
-                disabled={!connected}
+                disabled={!connected || launching}
                 className="btn-primary w-full py-3.5 text-base font-display tracking-widest"
               >
-                {connected ? 'LAUNCH' : 'Connecting...'}
+                {!connected ? 'Connecting...' : launching ? 'Launching...' : 'LAUNCH'}
               </button>
             </>
           )}
@@ -138,10 +147,10 @@ export default function Home() {
               </div>
               <button
                 onClick={handleJoin}
-                disabled={!connected || !joinCode.trim()}
+                disabled={!connected || !joinCode.trim() || launching}
                 className="btn-primary w-full py-3.5 text-base font-display tracking-widest"
               >
-                {connected ? 'JOIN' : 'Connecting...'}
+                {!connected ? 'Connecting...' : launching ? 'Joining...' : 'JOIN'}
               </button>
             </>
           )}
