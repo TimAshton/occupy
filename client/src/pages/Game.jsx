@@ -96,7 +96,7 @@ export default function Game() {
           <GameStatus />
 
           {/* Invite strip (online, waiting for opponent) */}
-          {status === 'active' && !opponentConnected && (
+          {status === 'active' && !opponentConnected && gameMode === 'online' && (
             <button
               onClick={handleCopyLink}
               className="btn-ghost w-full text-xs mt-2 md:mt-0"
