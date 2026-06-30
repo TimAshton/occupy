@@ -17,9 +17,9 @@ function freshState(overrides = {}) {
 }
 
 describe('createBoard', () => {
-  it('creates 100 squares', () => {
+  it('creates 16 squares', () => {
     const board = createBoard();
-    expect(board).toHaveLength(100);
+    expect(board).toHaveLength(16);
   });
 
   it('all squares start empty', () => {
