@@ -10,7 +10,7 @@ vi.mock('../store/gameStore.js', () => ({
 }));
 
 function makeBoard(overrides = []) {
-  const board = Array.from({ length: 100 }, (_, i) => ({
+  const board = Array.from({ length: 16 }, (_, i) => ({
     index: i, owner: 'empty', settlers: 0,
   }));
   overrides.forEach(o => { board[o.index] = { ...board[o.index], ...o }; });
@@ -36,14 +36,14 @@ describe('Board', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders 100 square buttons', () => {
+  it('renders 16 square buttons', () => {
     useGameStore.mockReturnValue({
       ...baseStore,
       gameState: { board: makeBoard(), currentTurn: 'player1' },
     });
     render(<Board />);
     const buttons = screen.getAllByRole('button');
-    expect(buttons).toHaveLength(100);
+    expect(buttons).toHaveLength(16);
   });
 
   it('calls selectSquare when clicking an empty square on own turn', () => {
