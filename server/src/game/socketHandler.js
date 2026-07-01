@@ -169,40 +169,7 @@ export function registerSocketHandlers(io, socket) {
 
     // ── CPU move (local mode) ──────────────────────────────────────────────
     if (game.gameMode === 'local' && newState.currentTurn === 'player2') {
-      setTimeout(() => {
-        const freshGame = getGame(gameId);
-        if (!freshGame || freshGame.status !== GAME_STATUS.ACTIVE) return;
-
-        const cpuMoveData = getCpuMove(freshGame, difficulty);
-        if (!cpuMoveData) return;
-
-        const cpuMove = { playerRole: 'player2', ...cpuMoveData };
-        const { newState: afterCpu, result: cpuResult, error: cpuError } = applyMove(freshGame, cpuMove);
-
-        if (cpuError) return;
-
-        updateGame(gameId, {
-          board: afterCpu.board,
-          players: afterCpu.players,
-          currentTurn: afterCpu.currentTurn,
-          status: afterCpu.status,
-          moveHistory: afterCpu.moveHistory,
-        });
-
-        socket.emit(SOCKET_EVENTS.MOVE_RESULT, {
-          result: cpuResult,
-          state: getPublicState(afterCpu, 'player1'),
-          isCpuMove: true,
-        });
-
-        if (afterCpu.status === GAME_STATUS.FINISHED) {
-          socket.emit(SOCKET_EVENTS.GAME_OVER, {
-            winner: afterCpu.winner,
-            scores: afterCpu.scores,
-            players: afterCpu.players,
-          });
-        }
-      }, 800); // slight delay so CPU doesn't feel instant
+      scheduleCpuMove(socket, io, gameId, difficulty, 800);
     }
   });
 
@@ -214,4 +181,53 @@ export function registerSocketHandlers(io, socket) {
     }
     console.log(`[socket] disconnected: ${socket.id}`);
   });
+}
+
+/**
+ * Schedule a CPU move after a delay.
+ * If after the CPU moves it's still the CPU's turn (player1 has 0 settlers),
+ * keep scheduling more CPU moves until player1 gets settlers back or game ends.
+ */
+function scheduleCpuMove(socket, io, gameId, difficulty, delay) {
+  setTimeout(() => {
+    const freshGame = getGame(gameId);
+    if (!freshGame || freshGame.status !== GAME_STATUS.ACTIVE) return;
+    if (freshGame.currentTurn !== 'player2') return;
+
+    const cpuMoveData = getCpuMove(freshGame, difficulty);
+    if (!cpuMoveData) return;
+
+    const cpuMove = { playerRole: 'player2', ...cpuMoveData };
+    const { newState: afterCpu, result: cpuResult, error: cpuError } = applyMove(freshGame, cpuMove);
+
+    if (cpuError) return;
+
+    updateGame(gameId, {
+      board: afterCpu.board,
+      players: afterCpu.players,
+      currentTurn: afterCpu.currentTurn,
+      status: afterCpu.status,
+      moveHistory: afterCpu.moveHistory,
+    });
+
+    socket.emit(SOCKET_EVENTS.MOVE_RESULT, {
+      result: cpuResult,
+      state: getPublicState(afterCpu, 'player1'),
+      isCpuMove: true,
+    });
+
+    if (afterCpu.status === GAME_STATUS.FINISHED) {
+      socket.emit(SOCKET_EVENTS.GAME_OVER, {
+        winner: afterCpu.winner,
+        scores: afterCpu.scores,
+        players: afterCpu.players,
+      });
+      return;
+    }
+
+    // If still CPU's turn (player1 has 0 settlers), keep going
+    if (afterCpu.currentTurn === 'player2') {
+      scheduleCpuMove(socket, io, gameId, difficulty, 1000);
+    }
+  }, delay);
 }
