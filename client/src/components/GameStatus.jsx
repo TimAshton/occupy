@@ -84,6 +84,9 @@ export default function GameStatus() {
                   {' '}({flashResult.winner === myRole ? '+' : '-'}{flashResult.spoils} spoils)
                 </span>
               )}
+              {flashResult.turnSkipped && (
+                <div className="text-text-muted mt-0.5">⏭ Opponent has no settlers — your turn again</div>
+              )}
             </div>
           ) : (
             <div>

@@ -139,11 +139,16 @@ export function applyMove(state, move) {
   }
 
   // ── Advance turn ─────────────────────────────────────────────────────────
+  // If the next player has no settlers, skip back to the current player
+  // so they can keep playing until both are out (game over condition).
+  const nextTurn = newPlayers[opponent].settlers === 0 ? playerRole : opponent;
+  if (nextTurn === playerRole) result.turnSkipped = true;
+
   const newState = {
     ...state,
     board: newBoard,
     players: newPlayers,
-    currentTurn: opponent,
+    currentTurn: nextTurn,
     moveHistory: [...(state.moveHistory || []), result],
   };
 
