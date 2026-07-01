@@ -10,7 +10,7 @@ import Notification from '../components/Notification.jsx';
 export default function Game() {
   const navigate = useNavigate();
   const {
-    gameState, status, myRole, gameId,
+    gameState, status, myRole, gameId, gameMode,
     opponentConnected, notification, reset, pendingAction,
   } = useGameStore();
 
