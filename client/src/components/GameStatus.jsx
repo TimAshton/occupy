@@ -79,6 +79,11 @@ export default function GameStatus() {
                 {flashResult.isCpuMove ? '🤖 CPU' : flashResult.winner === myRole ? '✅ Won' : '❌ Lost'}
               </span>
               {' '}— defender had <span className="font-mono">{flashResult.revealed}</span> settlers
+              {flashResult.spoils > 0 && (
+                <span className={flashResult.winner === myRole ? ' text-green-400' : ' text-territory-red'}>
+                  {' '}({flashResult.winner === myRole ? '+' : '-'}{flashResult.spoils} spoils)
+                </span>
+              )}
             </div>
           ) : (
             <div>

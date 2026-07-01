@@ -1,3 +1,4 @@
+// server/src/game/engine.js
 import {
   GAME_CONFIG,
   SQUARE_STATE,
@@ -103,11 +104,13 @@ export function applyMove(state, move) {
 
     if (contestResult === 'attacker') {
       // Attacker wins: takes the square with their committed count
+      // and gains the defender's settlers as spoils
       newBoard[squareIndex] = {
         index: squareIndex,
         owner: playerRole === 'player1' ? SQUARE_STATE.PLAYER_1 : SQUARE_STATE.PLAYER_2,
         settlers,
       };
+      newPlayers[playerRole].settlers += defenderCount;
       result = {
         action: TURN_ACTION.CHALLENGE,
         squareIndex,
@@ -115,9 +118,12 @@ export function applyMove(state, move) {
         defenderSettlers: defenderCount,
         winner: playerRole,
         revealed: defenderCount,
+        spoils: defenderCount,
       };
     } else {
-      // Defender wins or draw: square stays, defender keeps settlers
+      // Defender wins or draw: square stays
+      // Defender gains the attacker's committed settlers as spoils
+      newPlayers[opponent].settlers += settlers;
       result = {
         action: TURN_ACTION.CHALLENGE,
         squareIndex,
@@ -125,6 +131,7 @@ export function applyMove(state, move) {
         defenderSettlers: defenderCount,
         winner: opponent,
         revealed: defenderCount,
+        spoils: settlers,
       };
     }
   } else {

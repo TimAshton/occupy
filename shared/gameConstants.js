@@ -67,14 +67,14 @@ export function resolveContest(attackerCount, defenderCount) {
 }
 
 /**
- * Check if the game is over: all squares claimed, or one player has no settlers.
+ * Check if the game is over: both players have no settlers left.
+ * (All squares claimed no longer ends the game — players can keep challenging.)
  */
 export function checkGameOver(gameState) {
-  const { board, players } = gameState;
-  const allClaimed = board.every(sq => sq.owner !== SQUARE_STATE.EMPTY);
+  const { players } = gameState;
   const p1Out = players.player1.settlers === 0;
   const p2Out = players.player2.settlers === 0;
-  return allClaimed || p1Out || p2Out;
+  return p1Out && p2Out;
 }
 
 /**

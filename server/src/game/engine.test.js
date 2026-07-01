@@ -113,13 +113,26 @@ describe('applyMove — challenge', () => {
     expect(newState.board[0].owner).toBe(SQUARE_STATE.PLAYER_1);
   });
 
-  it('attacker loses settlers regardless of outcome', () => {
-    const state = stateWithOccupied(200);
+  it('attacker gains defender settlers as spoils when winning', () => {
+    const state = stateWithOccupied(50);
     const before = state.players.player2.settlers;
-    const { newState } = applyMove(state, {
+    const { newState, result } = applyMove(state, {
+      playerRole: 'player2', squareIndex: 0, action: TURN_ACTION.CHALLENGE, settlers: 100,
+    });
+    expect(result.winner).toBe('player2');
+    expect(result.spoils).toBe(50);
+    expect(newState.players.player2.settlers).toBe(before - 100 + 50);
+  });
+
+  it('defender gains attacker settlers as spoils when defending', () => {
+    const state = stateWithOccupied(200);
+    const before = state.players.player1.settlers;
+    const { newState, result } = applyMove(state, {
       playerRole: 'player2', squareIndex: 0, action: TURN_ACTION.CHALLENGE, settlers: 50,
     });
-    expect(newState.players.player2.settlers).toBe(before - 50);
+    expect(result.winner).toBe('player1');
+    expect(result.spoils).toBe(50);
+    expect(newState.players.player1.settlers).toBe(before + 50);
   });
 
   it('reveals defender count in result', () => {
@@ -148,14 +161,23 @@ describe('getBoardView', () => {
 });
 
 describe('game over', () => {
-  it('detects when a player runs out of settlers', () => {
-    // Give player2 only 1 settler
+  it('does not end when only one player is out of settlers', () => {
     const state = freshState({ players: { player1: { name: 'A', settlers: 500 }, player2: { name: 'B', settlers: 1 } } });
-    // p1 claims sq 0
     const { newState: s1 } = applyMove(state, {
       playerRole: 'player1', squareIndex: 0, action: TURN_ACTION.CLAIM, settlers: 10,
     });
-    // p2 spends last settler
+    const { newState: s2 } = applyMove(s1, {
+      playerRole: 'player2', squareIndex: 1, action: TURN_ACTION.CLAIM, settlers: 1,
+    });
+    // player2 is out but player1 still has settlers — game should continue
+    expect(s2.status).not.toBe(GAME_STATUS.FINISHED);
+  });
+
+  it('ends when both players are out of settlers', () => {
+    const state = freshState({ players: { player1: { name: 'A', settlers: 1 }, player2: { name: 'B', settlers: 1 } } });
+    const { newState: s1 } = applyMove(state, {
+      playerRole: 'player1', squareIndex: 0, action: TURN_ACTION.CLAIM, settlers: 1,
+    });
     const { newState: s2 } = applyMove(s1, {
       playerRole: 'player2', squareIndex: 1, action: TURN_ACTION.CLAIM, settlers: 1,
     });
