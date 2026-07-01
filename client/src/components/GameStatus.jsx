@@ -4,7 +4,7 @@ import { useGameStore } from '../store/gameStore.js';
 import clsx from 'clsx';
 
 export default function GameStatus() {
-  const { gameState, myRole, lastResult, status } = useGameStore();
+  const { gameState, myRole, lastResult, status, gameMode } = useGameStore();
   const [flashResult, setFlashResult] = useState(null);
 
   useEffect(() => {
@@ -60,8 +60,12 @@ export default function GameStatus() {
             'text-2xl font-mono font-bold',
             oppRole === 'player1' ? 'text-territory-red' : 'text-territory-blue'
           )}>{oppScore}</div>
-          <div className="text-[10px] text-text-muted uppercase tracking-wider mt-0.5">Opponent</div>
-          <div className="text-xs text-text-secondary mt-1 font-mono">{oppSettlers.toLocaleString()} settlers</div>
+          <div className="text-[10px] text-text-muted uppercase tracking-wider mt-0.5">
+            {gameMode === 'local' ? 'CPU' : 'Opponent'}
+          </div>
+          {gameMode !== 'local' && (
+            <div className="text-xs text-text-secondary mt-1 font-mono">{oppSettlers.toLocaleString()} settlers</div>
+          )}
         </div>
       </div>
 
