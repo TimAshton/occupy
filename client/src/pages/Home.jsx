@@ -64,19 +64,6 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Name */}
-          <div className="mb-3">
-            <label className="block text-xs text-text-muted uppercase tracking-widest mb-1">Your name</label>
-            <input
-              type="text"
-              value={playerName}
-              onChange={e => setPlayerName(e.target.value)}
-              placeholder={tab === 'create' ? 'Player 1' : 'Player 2'}
-              maxLength={20}
-              className="input w-full"
-            />
-          </div>
-
           {tab === 'create' && (
             <>
               {/* Mode */}
@@ -98,7 +85,24 @@ export default function Home() {
                   ))}
                 </div>
               </div>
+            </>
+          )}
 
+          {/* Name */}
+          <div className="mb-3">
+            <label className="block text-xs text-text-muted uppercase tracking-widest mb-1">Your name</label>
+            <input
+              type="text"
+              value={playerName}
+              onChange={e => setPlayerName(e.target.value)}
+              placeholder={tab === 'create' ? 'Player 1' : 'Player 2'}
+              maxLength={20}
+              className="input w-full"
+            />
+          </div>
+
+          {tab === 'create' && (
+            <>
               {/* Difficulty */}
               {mode === 'local' && (
                 <div className="mb-3">
